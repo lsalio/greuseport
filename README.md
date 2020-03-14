@@ -4,12 +4,12 @@ SO_REUSEADDR and SO_REUSEPORT in golang
 
 ### Installation
 ```shell
-go get -u -v github.com/lsalio/greuseport
+go get -u -v github.com/wjiec/greuseport
 ```
 
 or use go module
 ```shell
-require github.com/lsalio/greuseport latest
+require github.com/wjiec/greuseport latest
 ```
 
 ### Quick Start
@@ -22,7 +22,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/lsalio/greuseport"
+	"github.com/wjiec/greuseport"
 )
 
 func main() {
