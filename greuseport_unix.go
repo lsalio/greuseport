@@ -2,31 +2,31 @@
 
 package greuseport
 
-/*
-#cgo CFLAGS: -Wall -std=c99
-#include <stdbool.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-
-bool reuse(int fd) {
-	char value = 1;
-
-	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(value)) < 0) {
-		return false;
-	}
-	if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &value, sizeof(value)) < 0) {
-		return false;
-	}
-	return true;
-}
-*/
-import "C"
 import (
 	"syscall"
+	"unsafe"
 )
 
-func control(_ string, _ string, c syscall.RawConn) error {
+type setsockopt struct{}
+
+func (setsockopt) Call(fd int, level int, opt int, v int32) error {
+	_, _, e := syscall.Syscall6(syscall.SYS_SETSOCKOPT, uintptr(fd), uintptr(level), uintptr(opt), uintptr(unsafe.Pointer(&v)), uintptr(4), 0)
+	if e != 0 {
+		return e
+	}
+	return nil
+}
+
+var proc setsockopt
+
+func control(_ string, _ string, c syscall.RawConn) (err error) {
 	return c.Control(func(fd uintptr) {
-		C.reuse(C.int(fd))
+		if err = proc.Call(int(fd), syscall.SOL_SOCKET, syscall.SO_REUSEADDR, 1); err != nil {
+			return
+		}
+
+		if err = proc.Call(int(fd), syscall.SOL_SOCKET, 0xf /* SO_REUSEPORT */, 1); err != nil {
+			return
+		}
 	})
 }

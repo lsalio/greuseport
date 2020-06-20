@@ -1,14 +1,3 @@
-# greuseport
-SO_REUSEADDR and SO_REUSEPORT in golang
-
-
-### Installation
-```shell
-go get -u -v github.com/wjiec/greuseport
-```
-
-### Quick Start
-```go
 package main
 
 import (
@@ -40,4 +29,3 @@ func main() {
 	log.Printf("server running at %s\n", addr)
 	log.Fatal(server.Serve(listener))
 }
-```
